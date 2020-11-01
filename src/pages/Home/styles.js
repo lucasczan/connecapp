@@ -9,7 +9,7 @@ export const Container = styled.SafeAreaView`
 
 export const LogOutContainer = styled.TouchableOpacity`
   position: absolute;
-  top: 80px;
+  top: 5%;
   left: 30px;
   transform: scaleX(-1);
 `;
@@ -25,7 +25,7 @@ export const CredentialBox = styled.View`
 
 export const AddCredential = styled.TouchableOpacity`
   position: absolute;
-  top: 80px;
+  top: 5%;
   right: 30px;
   background-color: #54ecbe;
   padding: 10px;
@@ -55,7 +55,7 @@ export const UpdateCredential = styled.TouchableOpacity`
 export const Title = styled.Text`
   position: absolute;
   font-size: 18px;
-  top: 420px;
+  top: 45%;
 `;
 
 export const TextCredentialsBox = styled.View`

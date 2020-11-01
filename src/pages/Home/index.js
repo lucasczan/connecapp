@@ -165,7 +165,7 @@ const Home = () => {
         <Image
           style={{
             position: 'absolute',
-            top: 170,
+            top: '15%',
             height: 180,
             width: 180,
             borderRadius: 100,
@@ -174,12 +174,12 @@ const Home = () => {
           }}
           source={avatar}
         />
-        <Title>Administração de credenciais</Title>
         <AddCredential onPress={() => toggleOverlayCredentialModal('add')}>
           <Text style={{color: '#fff', fontWeight: 'bold'}}>
             Cadastrar credencial
           </Text>
         </AddCredential>
+        <Title>Administração de credenciais</Title>
         <List>
           {loading ? (
             <ActivityIndicator
@@ -201,7 +201,7 @@ const Home = () => {
                         shadowOffset: {width: 0, height: 2},
                         shadowOpacity: 0.2,
                         shadowRadius: 10,
-                        elevation: 1,
+                        elevation: 10,
                       }}>
                       <Image
                         style={{height: 80, width: 80, borderRadius: 50}}

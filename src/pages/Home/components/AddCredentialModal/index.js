@@ -42,7 +42,8 @@ const AddCredentialModal = ({
                 admin: !newCredential.admin,
               })
             }
-            trackColor={{false: '#fff', true: '#6d71f9'}}
+            thumbColor={'#6d71f9'}
+            trackColor={{false: '#9999', true: '#6d71f9'}}
           />
           <Text style={{marginTop: 15, marginLeft: 15}}>ADMIN</Text>
         </SwitchContainer>

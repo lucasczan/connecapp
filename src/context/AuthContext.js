@@ -1,7 +1,6 @@
 import React, {createContext, useCallback, useState, useEffect} from 'react';
 import {api} from '../services/api';
 import AsyncStorage from '@react-native-community/async-storage';
-
 const AuthContext = createContext();
 const AuthContextProvider = ({children}) => {
   const [accessToken, setAccessToken] = useState('');

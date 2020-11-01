@@ -10,10 +10,7 @@ const SignIn = () => {
   const {signIn} = useContext(AuthContext);
   return (
     <Container>
-      <Image
-        style={{width: 200, position: 'absolute', top: 150}}
-        source={signImage}
-      />
+      <Image source={signImage} />
       <Title>Faça seu logon.</Title>
       <Input
         placeholder="Email..."
