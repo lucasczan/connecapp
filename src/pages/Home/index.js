@@ -16,7 +16,7 @@ import {api} from '../../services/api';
 import {AuthContext} from '../../context/AuthContext';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useCallback} from 'react';
-import {Image} from 'react-native';
+import {Image, ActivityIndicator} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import avatar from './img/avatar.png';
 import AddCredentialModal from './components/AddCredentialModal';
@@ -26,6 +26,7 @@ Icon.loadFont();
 const Home = () => {
   const {accessToken, signOut, user} = useContext(AuthContext);
   const [credentials, setCredentials] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [visibleCredentialModal, setVisibleCridentialModal] = useState(false);
   const [updatePassword, setUpdatePassword] = useState('');
   const [visibleUpdateModal, setVisibleUpdateModal] = useState({
@@ -63,6 +64,7 @@ const Home = () => {
           (item) => item.email !== user.email,
         );
         setCredentials(loadcredentials);
+        setLoading(false);
       } catch (error) {
         alert('Erro ao carregar as credenciais');
       }
@@ -179,58 +181,66 @@ const Home = () => {
           </Text>
         </AddCredential>
         <List>
-          <FlatList
-            style={{width: '100%', height: '100%'}}
-            data={credentials}
-            horizontal
-            keyExtractor={(item) => item.codigo.toString()}
-            renderItem={({item}) => {
-              return (
-                <ContainerList>
-                  <CredentialBox
-                    style={{
-                      shadowOffset: {width: 0, height: 2},
-                      shadowOpacity: 0.2,
-                      shadowRadius: 10,
-                      elevation: 1,
-                    }}>
-                    <Image
-                      style={{height: 80, width: 80, borderRadius: 50}}
-                      source={{
-                        uri: `https://picsum.photos/id/${Math.floor(
-                          Math.random() * 100,
-                        )}/200/100`,
-                      }}
-                    />
-
-                    <TextCredentialsBox>
-                      <Text>{item.email}</Text>
-                      <Text style={{fontWeight: 'bold'}}>
-                        {item.tipoUsuario}
-                      </Text>
-                    </TextCredentialsBox>
-                    <RemoveCRedential
-                      onPress={() => handleDeleteCredential(item.codigo)}>
-                      <Text>
-                        <Icon name="delete" color="#ffff" size={20} />
-                      </Text>
-                    </RemoveCRedential>
-                    <UpdateCredential
-                      onPress={() => {
-                        setVisibleUpdateModal({
-                          visible: !visibleUpdateModal.visible,
-                          id: item.codigo,
-                        });
+          {loading ? (
+            <ActivityIndicator
+              style={{marginTop: 100}}
+              size="large"
+              color="#6d71f9"
+            />
+          ) : (
+            <FlatList
+              style={{width: '100%', height: '100%'}}
+              data={credentials}
+              horizontal
+              keyExtractor={(item) => item.codigo.toString()}
+              renderItem={({item}) => {
+                return (
+                  <ContainerList>
+                    <CredentialBox
+                      style={{
+                        shadowOffset: {width: 0, height: 2},
+                        shadowOpacity: 0.2,
+                        shadowRadius: 10,
+                        elevation: 1,
                       }}>
-                      <Text>
-                        <Icon name="edit" color="#ffff" size={20} />
-                      </Text>
-                    </UpdateCredential>
-                  </CredentialBox>
-                </ContainerList>
-              );
-            }}
-          />
+                      <Image
+                        style={{height: 80, width: 80, borderRadius: 50}}
+                        source={{
+                          uri: `https://picsum.photos/id/${Math.floor(
+                            Math.random() * 100,
+                          )}/200/100`,
+                        }}
+                      />
+
+                      <TextCredentialsBox>
+                        <Text>{item.email}</Text>
+                        <Text style={{fontWeight: 'bold'}}>
+                          {item.tipoUsuario}
+                        </Text>
+                      </TextCredentialsBox>
+                      <RemoveCRedential
+                        onPress={() => handleDeleteCredential(item.codigo)}>
+                        <Text>
+                          <Icon name="delete" color="#ffff" size={20} />
+                        </Text>
+                      </RemoveCRedential>
+                      <UpdateCredential
+                        onPress={() => {
+                          setVisibleUpdateModal({
+                            visible: !visibleUpdateModal.visible,
+                            id: item.codigo,
+                          });
+                        }}>
+                        <Text>
+                          <Icon name="edit" color="#ffff" size={20} />
+                        </Text>
+                      </UpdateCredential>
+                    </CredentialBox>
+                  </ContainerList>
+                );
+              }}
+            />
+          )}
         </List>
       </>
     </Container>

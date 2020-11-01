@@ -6,6 +6,7 @@ const AuthContext = createContext();
 const AuthContextProvider = ({children}) => {
   const [accessToken, setAccessToken] = useState('');
   const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadStorageData() {
@@ -13,6 +14,7 @@ const AuthContextProvider = ({children}) => {
       if (token) {
         setAccessToken(token);
       }
+      setLoading(false);
     }
     loadStorageData();
   }, []);
@@ -37,7 +39,7 @@ const AuthContextProvider = ({children}) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{signIn, signOut, user, accessToken}}>
+    <AuthContext.Provider value={{loading, signIn, signOut, user, accessToken}}>
       {children}
     </AuthContext.Provider>
   );
