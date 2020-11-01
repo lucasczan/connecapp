@@ -1,5 +1,5 @@
 import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: 'http://192.168.1.61:8080',
+  baseURL: 'https://connec-api.herokuapp.com',
 });

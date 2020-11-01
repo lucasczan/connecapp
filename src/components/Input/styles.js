@@ -6,4 +6,5 @@ export const InputCustom = styled.TextInput`
   height: 40px;
   border-radius: 5px;
   margin-top: 8px;
+  padding-left: 10px;
 `;

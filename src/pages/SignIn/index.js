@@ -3,27 +3,30 @@ import React, {useState, useContext} from 'react';
 import {Container, Button, Text, TextBottom, Title} from './styles';
 import Input from '../../components/Input';
 import {AuthContext} from '../../context/AuthContext';
-const SignIn = ({navigation}) => {
+import {Image} from 'react-native';
+import signImage from './img/loginimage.png';
+const SignIn = () => {
   const [user, setUser] = useState({});
-  const {signIn, hasToken} = useContext(AuthContext);
-  console.log('2323', hasToken);
+  const {signIn} = useContext(AuthContext);
   return (
     <Container>
+      <Image
+        style={{width: 200, position: 'absolute', top: 150}}
+        source={signImage}
+      />
       <Title>Faça seu logon.</Title>
-      <Input onChangeText={(text) => setUser({...user, email: text})} />
-      <Input onChangeText={(text) => setUser({...user, password: text})} />
+      <Input
+        placeholder="Email..."
+        onChangeText={(text) => setUser({...user, email: text})}
+      />
+      <Input
+        placeholder="Senha..."
+        secureTextEntry={true}
+        onChangeText={(text) => setUser({...user, password: text})}
+      />
       <Button onPress={() => signIn(user)}>
         <Text>Entrar</Text>
       </Button>
-      <TextBottom
-        bottom={'200px'}
-        color={'black'}
-        onPress={() => navigation.navigate('cadastro')}>
-        Cadastre-se
-      </TextBottom>
-      <TextBottom bottom={'160px'} color={'black'}>
-        Esqueci a senha
-      </TextBottom>
     </Container>
   );
 };

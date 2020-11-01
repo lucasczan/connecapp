@@ -25,7 +25,8 @@ export const Text = styled.Text`
 export const Title = styled.Text`
   font-size: 24px;
   color: black;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
+  margin-top: 50px;
 `;
 
 export const TextBottom = styled.Text`

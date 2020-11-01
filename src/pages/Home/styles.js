@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import Input from '../../components/Input';
 
 export const Container = styled.SafeAreaView`
   flex: 1;
@@ -56,21 +55,13 @@ export const UpdateCredential = styled.TouchableOpacity`
 export const Title = styled.Text`
   position: absolute;
   font-size: 18px;
-  top: 450px;
+  top: 420px;
 `;
 
 export const TextCredentialsBox = styled.View`
   position: absolute;
   bottom: 50px;
   left: 20px;
-`;
-
-export const AddInput = styled.TextInput`
-  width: 300px;
-  height: 40px;
-  border: #549eec;
-  margin-top: 15px;
-  padding-left: 5px;
 `;
 
 export const List = styled.View`
@@ -87,18 +78,6 @@ export const ContainerList = styled.View`
   margin-top: 5px;
   align-items: center;
   padding: 5px;
-`;
-export const AddButton = styled.TouchableOpacity`
-  background-color: #549eec;
-  align-items: center;
-  padding: 10px 0px;
-  margin-top: 30px;
-  border-radius: 5px;
-`;
-
-export const SwitchContainer = styled.View`
-  flex-direction: row;
-  align-items: center;
 `;
 
 export const Text = styled.Text``;

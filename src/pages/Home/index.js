@@ -8,64 +8,85 @@ import {
   UpdateCredential,
   TextCredentialsBox,
   LogOutContainer,
-  AddInput,
-  AddButton,
-  SwitchContainer,
   ContainerList,
   List,
   Title,
 } from './styles';
 import {api} from '../../services/api';
 import {AuthContext} from '../../context/AuthContext';
-import {Overlay} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {useCallback} from 'react';
-import {Switch, Image} from 'react-native';
+import {Image} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import avatar from './img/avatar.png';
-
+import AddCredentialModal from './components/AddCredentialModal';
+import UpdatePasswordModal from './components/UpdatePasswordModal';
 Icon.loadFont();
 
 const Home = () => {
   const {accessToken, signOut, user} = useContext(AuthContext);
   const [credentials, setCredentials] = useState([]);
-  const [visible, setVisible] = useState(false);
+  const [visibleCredentialModal, setVisibleCridentialModal] = useState(false);
+  const [updatePassword, setUpdatePassword] = useState('');
+  const [visibleUpdateModal, setVisibleUpdateModal] = useState({
+    visible: false,
+    id: undefined,
+  });
   const [newCredential, setNewCredential] = useState({
     email: '',
     password: '',
     admin: false,
   });
-  console.log(user);
-  const toggleOverlay = () => {
-    setVisible(!visible);
+  const toggleOverlayCredentialModal = (id) => {
+    if (id === 'add') {
+      setVisibleCridentialModal(!visibleCredentialModal);
+    } else {
+      setVisibleUpdateModal({
+        visible: !visibleUpdateModal.visible,
+        id: undefined,
+      });
+    }
   };
+  const Options = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+
   useEffect(() => {
     async function loadCredentials() {
-      const response = await api.get('/credenciais', {
-        headers: {Authorization: `Bearer ${accessToken}`},
-      });
-      const credentials = response.data.filter(
-        (item) => item.email !== user.email,
-      );
-      setCredentials(credentials);
+      try {
+        const response = await api.get('/credenciais', {
+          headers: {Authorization: `Bearer ${accessToken}`},
+        });
+        const loadcredentials = response.data.filter(
+          (item) => item.email !== user.email,
+        );
+        setCredentials(loadcredentials);
+      } catch (error) {
+        alert('Erro ao carregar as credenciais');
+      }
     }
     loadCredentials();
   }, [accessToken, user]);
 
   const handleDeleteCredential = useCallback(
     async (id) => {
-      try {
-        await api.delete(`/credenciais/${id}`, {
-          headers: {Authorization: `Bearer ${accessToken}`},
-        });
-        setCredentials(
-          credentials.filter((credential) => credential.codigo !== id),
-        );
-      } catch (error) {
-        console.log(error);
+      if (id !== 1) {
+        try {
+          await api.delete(`/credenciais/${id}`, Options);
+          setCredentials(
+            credentials.filter((credential) => credential.codigo !== id),
+          );
+          alert('Credencial deletada com sucesso!');
+        } catch (error) {
+          alert('Erro ao deletar essa credencial');
+        }
+      } else {
+        alert('você não tem permissão para remover essa credencial');
       }
     },
-    [credentials, accessToken],
+    [Options, credentials],
   );
 
   const handleAddCredential = useCallback(async () => {
@@ -77,14 +98,11 @@ const Home = () => {
           senha: newCredential.password,
           tipoUsuario: newCredential.admin ? 'ADMIN' : 'PADRAO',
         },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
+        Options,
       );
       setCredentials([...credentials, response.data]);
-      setVisible(!visible);
+      alert('Credencial criada com sucesso!');
+      setNewCredential({});
     } catch (error) {
       alert('Erro ao cadastrar credencial.');
     }
@@ -92,14 +110,53 @@ const Home = () => {
     newCredential.email,
     newCredential.password,
     newCredential.admin,
-    accessToken,
+    Options,
     credentials,
-    visible,
   ]);
+
+  const handleUpdatePassword = useCallback(
+    async (id) => {
+      try {
+        await api.put(
+          `/credenciais/${id}/senha`,
+          {
+            senhaAntiga: '',
+            novaSenha: updatePassword,
+          },
+          Options,
+        );
+        alert('Senha atualizada com suceso!');
+        setVisibleUpdateModal({
+          ...visibleUpdateModal,
+          id: undefined,
+        });
+        setUpdatePassword('');
+      } catch (error) {
+        alert('Erro ao atualizar a senha.');
+      }
+    },
+    [updatePassword, Options, visibleUpdateModal],
+  );
 
   return (
     <Container>
       <>
+        <UpdatePasswordModal
+          updatePassword={updatePassword}
+          toggleOverlay={toggleOverlayCredentialModal}
+          visible={visibleUpdateModal}
+          setUpdatePassword={setUpdatePassword}
+          setVisibleUpdateModal={setVisibleUpdateModal}
+          handleUpdatePassword={handleUpdatePassword}
+        />
+        <AddCredentialModal
+          toggleOverlay={toggleOverlayCredentialModal}
+          setVisible={setVisibleCridentialModal}
+          visible={visibleCredentialModal}
+          newCredential={newCredential}
+          setNewCredential={setNewCredential}
+          handleAddCredential={handleAddCredential}
+        />
         <LogOutContainer onPress={() => signOut()}>
           <Icon name="logout" color="black" size={35} />
         </LogOutContainer>
@@ -116,41 +173,7 @@ const Home = () => {
           source={avatar}
         />
         <Title>Administração de credenciais</Title>
-        <Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
-          <Text style={{fontSize: 18, marginBottom: 20}}>
-            Adicionar credencial
-          </Text>
-          <AddInput
-            placeholder="Email..."
-            onChangeText={(text) =>
-              setNewCredential({...newCredential, email: text})
-            }
-          />
-          <AddInput
-            placeholder="Senha..."
-            onChangeText={(text) =>
-              setNewCredential({...newCredential, password: text})
-            }
-          />
-          <SwitchContainer>
-            <Switch
-              style={{marginTop: 15}}
-              value={newCredential.admin}
-              onValueChange={(e) =>
-                setNewCredential({
-                  ...newCredential,
-                  admin: !newCredential.admin,
-                })
-              }
-              trackColor={{false: '#fff', true: '#6d71f9'}}
-            />
-            <Text style={{marginTop: 15, marginLeft: 15}}>ADMIN</Text>
-          </SwitchContainer>
-          <AddButton onPress={() => handleAddCredential()}>
-            <Text style={{color: '#fff'}}>Adicionar</Text>
-          </AddButton>
-        </Overlay>
-        <AddCredential onPress={toggleOverlay}>
+        <AddCredential onPress={() => toggleOverlayCredentialModal('add')}>
           <Text style={{color: '#fff', fontWeight: 'bold'}}>
             Cadastrar credencial
           </Text>
@@ -160,7 +183,7 @@ const Home = () => {
             style={{width: '100%', height: '100%'}}
             data={credentials}
             horizontal
-            keyExtractor={(item) => item.codigo}
+            keyExtractor={(item) => item.codigo.toString()}
             renderItem={({item}) => {
               return (
                 <ContainerList>
@@ -192,7 +215,13 @@ const Home = () => {
                         <Icon name="delete" color="#ffff" size={20} />
                       </Text>
                     </RemoveCRedential>
-                    <UpdateCredential>
+                    <UpdateCredential
+                      onPress={() => {
+                        setVisibleUpdateModal({
+                          visible: !visibleUpdateModal.visible,
+                          id: item.codigo,
+                        });
+                      }}>
                       <Text>
                         <Icon name="edit" color="#ffff" size={20} />
                       </Text>
